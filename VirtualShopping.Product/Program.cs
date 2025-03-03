@@ -1,5 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using VirtualShopping.Product.Context;
+using VirtualShopping.Product.Implementation.Interface;
+using VirtualShopping.Product.Implementation.Repository;
+using VirtualShopping.Product.Services;
+using VirtualShopping.Product.Services.Contracts;
+using VirtualShopping.Product.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +21,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(mySqlConnection));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+builder.Services.AddScoped<IProductServices, ProductServices>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 var app = builder.Build();
 

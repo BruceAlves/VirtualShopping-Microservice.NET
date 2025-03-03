@@ -34,8 +34,13 @@ namespace VirtualShopping.Product.Implementation.Repository
 
         public async Task<Category> GetById(int id)
         {
-            return await _context.Categories.Where(c => c.CategoryId == id).FirstOrDefaultAsync();
+            var category = await _context.Categories
+                                          .Where(c => c.CategoryId == id)
+                                          .FirstOrDefaultAsync();
+
+            return category ?? new Category();
         }
+
 
         public async Task<IEnumerable<Category>> GetCategoriesProducts()
         {
