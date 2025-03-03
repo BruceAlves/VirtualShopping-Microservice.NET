@@ -21,7 +21,7 @@ namespace VirtualShopping.Product.Controllers
         {
             var categoriesDtos = await _categoryServices.GetCategories();
 
-            if(categoriesDtos is null)
+            if (categoriesDtos is null)
                 return NotFound("Categories not found");
 
             return Ok(categoriesDtos);
@@ -38,8 +38,8 @@ namespace VirtualShopping.Product.Controllers
             return Ok(categoriesDtos);
         }
 
-        [HttpGet("{id:int}", Name ="GetCategory")]
-        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategoryById(int id)
+        [HttpGet("{id:int}", Name = "GetCategory")]
+        public async Task<ActionResult<CategoryDTO>> GetCategoryById(int id) // Alterado para ActionResult<CategoryDTO>
         {
             var categoryDto = await _categoryServices.GetCategoriesById(id);
 
@@ -57,7 +57,7 @@ namespace VirtualShopping.Product.Controllers
 
             await _categoryServices.AddCategory(categoryDTO);
 
-            return new CreatedAtRouteResult("GetCategory", new { id = categoryDTO.CategoryId },categoryDTO);
+            return CreatedAtAction(nameof(GetCategoryById), new { id = categoryDTO.CategoryId }, categoryDTO); 
         }
 
         [HttpPut("{id:int}")]
@@ -71,13 +71,13 @@ namespace VirtualShopping.Product.Controllers
 
             await _categoryServices.UpdateCategory(categoryDTO);
 
-            return Ok(categoryDTO);
+            return NoContent(); 
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<CategoryDTO>> Delete(int id)
         {
-            var categoryDto = _categoryServices.GetCategoriesById(id);
+            var categoryDto = await _categoryServices.GetCategoriesById(id); 
 
             if (categoryDto is null)
                 return NotFound("Category not found");

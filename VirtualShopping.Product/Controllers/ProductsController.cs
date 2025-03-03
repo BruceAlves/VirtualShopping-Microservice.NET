@@ -9,7 +9,6 @@ namespace VirtualShopping.Product.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-
         private readonly IProductServices _productServices;
 
         public ProductsController(IProductServices productServices)
@@ -17,23 +16,24 @@ namespace VirtualShopping.Product.Controllers
             _productServices = productServices;
         }
 
+        [HttpGet] 
         public async Task<ActionResult<IEnumerable<ProductDTO>>> Get()
         {
-            var ProductsDtos = await _productServices.GetProducts();
+            var productsDtos = await _productServices.GetProducts();
 
-            if (ProductsDtos is null)
+            if (productsDtos is null)
                 return NotFound("Products not found");
 
-            return Ok(ProductsDtos);
+            return Ok(productsDtos);
         }
 
         [HttpGet("{id:int}", Name = "GetProduct")]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProductById(int id)
+        public async Task<ActionResult<ProductDTO>> GetProductById(int id)
         {
             var productDto = await _productServices.GetProductsById(id);
 
             if (productDto is null)
-                return NotFound("Products not found");
+                return NotFound("Product not found"); 
 
             return Ok(productDto);
         }
@@ -46,7 +46,7 @@ namespace VirtualShopping.Product.Controllers
 
             await _productServices.AddProduct(productDTO);
 
-            return new CreatedAtRouteResult("GetProduct", new { id = productDTO.Id }, productDTO);
+            return CreatedAtAction(nameof(GetProductById), new { id = productDTO.Id }, productDTO); 
         }
 
         [HttpPut("{id:int}")]
@@ -60,16 +60,16 @@ namespace VirtualShopping.Product.Controllers
 
             await _productServices.UpdateProduct(productDTO);
 
-            return Ok(productDTO);
+            return NoContent(); 
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<ProductDTO>> Delete(int id)
         {
-            var productDto = _productServices.GetProductsById(id);
+            var productDto = await _productServices.GetProductsById(id); 
 
             if (productDto is null)
-                return NotFound("Category not found");
+                return NotFound("Product not found"); 
 
             await _productServices.RemoveProduct(id);
 
